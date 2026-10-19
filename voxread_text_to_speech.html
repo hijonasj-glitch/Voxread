@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoxRead — Natural Text to Speech</title>
+<style>
+:root{color-scheme:dark;--bg:#0a0d14;--panel:#111725;--panel2:#151d2e;--line:#263249;--text:#f4f7ff;--muted:#9ba8bd;--accent:#8b7cff;--accent2:#5de1c2}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#27214c 0%,transparent 50%),var(--bg);color:var(--text);font:16px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;min-height:100vh}
+.wrap{max-width:1050px;margin:auto;padding:26px 20px 50px}.top{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:48px}.brand{display:flex;align-items:center;gap:11px;font-size:21px;font-weight:800;letter-spacing:-.5px}.logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#5a9bff);display:grid;place-items:center;box-shadow:0 6px 24px #7866ff44}.logo svg{width:22px}.pill{font-size:12px;color:#c9c4ff;border:1px solid #4a4379;background:#1b1933;padding:7px 11px;border-radius:99px}
+.hero{text-align:center;margin-bottom:30px}.eyebrow{color:var(--accent2);font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase}.hero h1{font-size:clamp(34px,6vw,56px);letter-spacing:-2px;line-height:1.08;margin:12px 0}.hero p{max-width:600px;margin:0 auto;color:var(--muted);font-size:16px}
+.card{background:linear-gradient(180deg,#141b2a,#101622);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 25px 80px #0003}.card-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid var(--line)}.card-head strong{font-size:14px}.small{font-size:12px;color:var(--muted)}
+textarea{display:block;width:100%;min-height:250px;resize:vertical;background:transparent;color:var(--text);border:0;outline:none;padding:23px 24px;font:17px/1.8 inherit;font-family:inherit}textarea::placeholder{color:#69768d}.editor-foot{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:0 23px 18px;color:var(--muted);font-size:12px;flex-wrap:wrap}.stats{display:flex;gap:12px;flex-wrap:wrap}.stat{white-space:nowrap}.stat b{color:#dfe6f7;font-weight:700}.text-actions{display:flex;gap:8px}.linkbtn{border:0;background:transparent;color:#c5cce0;cursor:pointer;padding:5px 7px}.linkbtn:hover{color:white}
+.controls{padding:22px;display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:16px;border-top:1px solid var(--line)}.field label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:9px}.field select{width:100%;border:1px solid #303c53;border-radius:11px;background:#0d1320;color:var(--text);padding:12px;font:inherit;font-size:14px;outline:none}.range-row{display:flex;align-items:center;gap:10px}.range-row input{width:100%;accent-color:var(--accent)}.range-value{font-size:12px;color:#d9d4ff;min-width:42px;text-align:right}
+.actions{display:flex;gap:10px;padding:0 22px 22px;flex-wrap:wrap}.primary,.secondary{border:0;border-radius:12px;padding:14px 20px;font:inherit;font-weight:800;cursor:pointer;transition:transform .15s,filter .15s}.primary{flex:1;min-width:150px;background:linear-gradient(100deg,#8b7cff,#6b91ff);color:white;box-shadow:0 8px 25px #766aff2c}.primary:hover,.secondary:hover{filter:brightness(1.1);transform:translateY(-1px)}.secondary{background:#202a3d;color:#e4eaff;border:1px solid #34415a}.primary:disabled,.secondary:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.status{margin:16px 22px 22px;padding:13px 15px;background:#0c1220;border:1px solid #222d42;border-radius:12px;display:flex;align-items:center;gap:12px}.bars{display:flex;align-items:center;gap:3px;height:23px}.bars span{display:block;width:3px;height:7px;border-radius:4px;background:var(--accent2)}.bars.playing span{animation:wave .7s ease-in-out infinite alternate}.bars span:nth-child(2n){animation-delay:.15s}.bars span:nth-child(3n){animation-delay:.3s}@keyframes wave{to{height:21px}}.status-text{flex:1}.status-text strong{font-size:13px;display:block}.status-text small{font-size:12px;color:var(--muted)}.progress{height:3px;background:#252e42;margin:0 22px 20px;border-radius:5px;overflow:hidden}.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .25s}
+.custom-voice{margin:0 22px 20px;padding:17px;border:1px solid #343052;background:linear-gradient(135deg,#1a1830,#111a29);border-radius:15px}.custom-voice h3{margin:0 0 5px;font-size:15px}.custom-voice p{margin:0 0 12px;color:var(--muted);font-size:12px}.custom-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.custom-actions input[type=file]{max-width:100%;font-size:12px;color:var(--muted)}.custom-voice audio{display:block;width:100%;margin-top:12px}.custom-state{font-size:12px;color:#b8f3e4;margin-top:9px}.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.feature{border:1px solid var(--line);background:#101622a8;border-radius:15px;padding:17px}.feature b{display:block;font-size:13px;margin-bottom:5px}.feature p{margin:0;color:var(--muted);font-size:12px}.ico{font-size:18px;margin-bottom:8px}.note{margin-top:20px;color:#7f8ba2;font-size:12px;text-align:center}.notice{display:none;margin:0 22px 18px;padding:12px 14px;border-radius:10px;background:#30251a;border:1px solid #6a4b27;color:#f6d6a9;font-size:12px}
+@media(max-width:700px){.custom-voice{margin-left:14px;margin-right:14px}.wrap{padding:18px 12px 35px}.actions{padding:0 14px 16px}.actions button{flex:1}.top{margin-bottom:34px}.hero h1{letter-spacing:-1.4px}.controls{grid-template-columns:1fr;gap:14px}.features{grid-template-columns:1fr}.card-head{padding:16px}.actions{padding:0 14px 16px}.secondary{padding:12px 14px}.editor-foot{padding:0 16px 15px}textarea{padding:18px;min-height:220px}.status{margin-left:14px;margin-right:14px}.progress{margin-left:14px;margin-right:14px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 10v4M8 6v12M12 3v18M16 7v10M20 10v4" stroke="white" stroke-width="2.3" stroke-linecap="round"/></svg></div>VoxRead</div>
+    <div class="pill">TEXT TO SPEECH · FREE</div>
+  </header>
+  <section class="hero">
+    <div class="eyebrow">Give your words a voice</div>
+    <h1>Listen to your text.<br><span style="background:linear-gradient(90deg,#b6aaff,#76e8d0);-webkit-background-clip:text;background-clip:text;color:transparent">Naturally.</span></h1>
+    <p>Turn text into spoken audio with the voices available on your device. Choose a voice, tune the pace, and press play.</p>
+  </section>
+  <main class="card">
+    <div class="card-head"><strong>Your script</strong><span class="small">Paste or type anything</span></div>
+    <textarea id="text" maxlength="20000" placeholder="Paste your text here and let VoxRead read it aloud…">Welcome to VoxRead. Turn any text into speech in just one click. Choose the voice that sounds best to you, adjust the speaking speed, and settle in to listen.</textarea>
+    <div class="editor-foot"><div class="stats"><span class="stat" id="count">0 characters</span><span class="stat" id="words">0 words</span><span class="stat" id="estimate">About 0 min</span></div><div class="text-actions"><button class="linkbtn" id="sample">Try sample</button><button class="linkbtn" id="download">Download .txt</button><button class="linkbtn" id="clear">Clear text</button></div></div>
+    <div class="controls">
+      <div class="field"><label for="voice">VOICE</label><select id="voice"><option>Loading voices…</option></select></div>
+      <div class="field"><label for="speed">SPEAKING SPEED</label><div class="range-row"><input id="speed" type="range" min="0.7" max="1.2" step="0.05" value="0.95"><span class="range-value" id="speedValue">0.95×</span></div></div>
+      <div class="field"><label for="pitch">VOICE PITCH</label><div class="range-row"><input id="pitch" type="range" min="0.8" max="1.2" step="0.05" value="1"><span class="range-value" id="pitchValue">1.00</span></div></div>
+    </div>
+    <section class="custom-voice" aria-labelledby="customVoiceTitle">
+      <h3 id="customVoiceTitle">Use your own voice</h3>
+      <p>Record or upload a voice sample to listen to it here. Your recording stays in this page and is not uploaded. This sample preview does not clone your voice for reading new text; that requires a separate AI voice-cloning service.</p>
+      <div class="custom-actions">
+        <button class="secondary" id="recordVoice">● Record voice sample</button>
+        <button class="secondary" id="stopRecord" disabled>■ Stop recording</button>
+        <label class="small" for="voiceFile">Or choose an audio file</label>
+        <input id="voiceFile" type="file" accept="audio/*">
+        <button class="linkbtn" id="clearVoice" type="button">Clear sample</button>
+      </div>
+      <div class="custom-state" id="customVoiceStatus" role="status">No personal voice sample added.</div>
+      <audio id="voiceSamplePlayer" controls hidden></audio>
+    </section>
+    <div class="actions"><button class="primary" id="play">▶ &nbsp; Read text</button><button class="secondary" id="preview">♫ Preview voice</button><button class="secondary" id="pause" disabled>Ⅱ</button><button class="secondary" id="stop" disabled>■</button></div>
+    <div class="notice" id="notice"></div>
+    <div class="status"><div class="bars" id="bars"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="status-text"><strong id="statusTitle">Ready to read</strong><small id="statusSub">Choose a voice and press Read text.</small></div><span class="small" id="time">READY</span></div>
+    <div class="progress"><div id="progress"></div></div>
+  </main>
+  <section class="features">
+    <div class="feature"><div class="ico">🎙️</div><b>Find your voice</b><p>Choose from the voices installed on your browser or device.</p></div>
+    <div class="feature"><div class="ico">🎚️</div><b>Make it sound right</b><p>Adjust speed and pitch to find a comfortable, natural pace.</p></div>
+    <div class="feature"><div class="ico">🔒</div><b>Private by design</b><p>This page sends no text to a server. Speech uses your browser's speech engine.</p></div>
+  </section>
+  <p class="note">Tip: press <b>Ctrl/⌘ + Enter</b> to start reading, or <b>Esc</b> to stop. Download .txt saves your script as a plain text file. <br>VoxRead automatically favors voices that appear to be enhanced or neural when your device provides them. The most lifelike voices require a neural AI speech provider; this free, private version uses voices exposed by your browser and does not pretend to generate studio-quality AI audio.</p>
+</div>
+<script>
+(() => {
+ const $ = id => document.getElementById(id);
+ const text = $('text'), voiceSelect = $('voice'), play = $('play'), pause = $('pause'), stop = $('stop');
+ let voices = [], chunks = [], currentChunk = 0, isPaused = false, runId = 0, currentUtterance = null, failedVoices = new Set();
+ const previewLine = 'Hi there. Thanks for listening. I hope your day is going well. Here is a short preview of this voice, with a natural pause between thoughts.';
+ const sample = "Hi there, and welcome. This is a quick voice sample. Try choosing a different voice, then adjust the speaking speed until it sounds comfortable and natural.";
+ function updateCount(){ const value=text.value; const words=value.trim()?value.trim().split(/\s+/).length:0; $('count').textContent=value.length.toLocaleString()+' characters'; $('words').textContent=words.toLocaleString()+' words'; const minutes=words/150; $('estimate').textContent=words===0?'About 0 min':(minutes<1?'About '+Math.max(1,Math.round(minutes*60))+' sec':'About '+Math.max(1,Math.round(minutes))+' min'); }
+ function setStatus(title, sub, time='READY'){ $('statusTitle').textContent=title; $('statusSub').textContent=sub; $('time').textContent=time; }
+ function showNotice(message){ $('notice').textContent=message; $('notice').style.display='block'; }
+ function hideNotice(){ $('notice').style.display='none'; }
+ function loadVoices(){
+   if(!('speechSynthesis' in window)){voiceSelect.innerHTML='<option value="">Speech not supported</option>';showNotice('This browser does not support speech synthesis. Try a recent version of Chrome, Edge, Safari, or Firefox.');play.disabled=true;return;}
+   const previousVoiceName=voices[Number(voiceSelect.value)]?.name;
+   const allVoices=window.speechSynthesis.getVoices();
+   voices=allVoices.filter(v=>String(v.lang||'').toLowerCase().replace('_','-')==='en-us');
+   voiceSelect.innerHTML='';
+   if(!voices.length){voiceSelect.innerHTML='<option value="">No US English voices found</option>';showNotice('VoxRead is set to US English voices only, but your browser has not provided one yet. Try refreshing, or enable/install an English (United States) voice in your device settings.');return;}
+   const qualityScore=v=>{const n=(v.name+' '+v.voiceURI).toLowerCase();let score=0;
+     if(/neural|natural|enhanced|premium|wavenet|studio|online/.test(n))score+=100;
+     if(/google us english|microsoft.*(aria|jenny|guy|ava|andrew|emma|brian)/.test(n))score+=35;
+     if(/compact|espeak|robot|classic/.test(n))score-=35;
+     if(v.default)score+=3;return score;};
+   voices.sort((a,b)=>qualityScore(b)-qualityScore(a)||a.name.localeCompare(b.name));
+   voices.forEach((v,i)=>{const o=document.createElement('option');o.value=String(i);const n=(v.name+' '+v.voiceURI).toLowerCase();const tag=/neural|natural|enhanced|premium|wavenet|studio/.test(n)?' · Higher quality (if supported)':(v.default?' · Device default':'');o.textContent=v.name+' · US English'+tag;voiceSelect.appendChild(o)});
+   let preferred=previousVoiceName?voices.findIndex(v=>v.name===previousVoiceName):-1;
+   if(preferred<0)preferred=voices.findIndex(v=>/neural|natural|enhanced|premium|wavenet|studio/.test((v.name+' '+v.voiceURI).toLowerCase()));
+   if(preferred<0)preferred=voices.findIndex(v=>v.default);
+   voiceSelect.value=String(Math.max(0,preferred));
+ }
+ function splitText(value,max=220){
+   const parts=[];let remaining=value.trim();
+   while(remaining.length>max){
+     let cut=Math.max(remaining.lastIndexOf('. ',max),remaining.lastIndexOf('! ',max),remaining.lastIndexOf('? ',max),remaining.lastIndexOf(', ',max),remaining.lastIndexOf(' ',max));
+     if(cut<max*0.45)cut=max;
+     parts.push(remaining.slice(0,cut+1).trim());remaining=remaining.slice(cut+1).trim();
+   }
+   if(remaining)parts.push(remaining);return parts;
+ }
+ function reset(){currentUtterance=null;chunks=[];currentChunk=0;isPaused=false;pause.textContent='Ⅱ';pause.disabled=true;stop.disabled=true;play.disabled=false;$('bars').classList.remove('playing');$('progress').style.width='0%';}
+ function nextWorkingVoice(){
+   const current=Number(voiceSelect.value);
+   for(let step=1;step<=voices.length;step++){
+     const idx=(current+step)%voices.length;
+     if(!failedVoices.has(voices[idx].name+'|'+voices[idx].lang)){
+       voiceSelect.value=String(idx);return voices[idx];
+     }
+   }
+   return null;
+ }
+ function speakChunk(id, attempt=0){
+   if(id!==runId||currentChunk>=chunks.length){if(id===runId){reset();setStatus('Finished reading','Your text has been read aloud.','DONE');$('progress').style.width='100%';}return;}
+   const u=new SpeechSynthesisUtterance(chunks[currentChunk]);
+   currentUtterance=u;
+   const idx=Number(voiceSelect.value);if(voices[idx])u.voice=voices[idx];
+   u.rate=Number($('speed').value);u.pitch=Number($('pitch').value);u.volume=1;
+   u.onstart=()=>{if(id!==runId)return;setStatus('Reading your text','You can pause or stop playback.',`${currentChunk+1}/${chunks.length}`);$('bars').classList.add('playing');$('progress').style.width=(currentChunk/chunks.length*100)+'%';};
+   u.onend=()=>{if(id!==runId)return;currentChunk++;setTimeout(()=>speakChunk(id),80);};
+   u.onerror=(e)=>{
+     if(id!==runId||e.error==='canceled'||e.error==='interrupted')return;
+     const bad=voices[Number(voiceSelect.value)];if(bad)failedVoices.add(bad.name+'|'+bad.lang);
+     const next=attempt<voices.length?nextWorkingVoice():null;
+     if(next){showNotice('That voice did not play on this device, so VoxRead is trying '+next.name+'.');setTimeout(()=>speakChunk(id,attempt+1),120);return;}
+     reset();setStatus('Voice playback failed','Try another voice or refresh the page.');showNotice('Your browser could not play the available US English voices. Try a different voice or check your device speech settings.');
+   };
+   window.speechSynthesis.speak(u);
+ }
+ $('preview').addEventListener('click',()=>{
+   if(!('speechSynthesis' in window)){showNotice('Speech synthesis is not supported in this browser.');return;}
+   hideNotice();runId++;window.speechSynthesis.cancel();reset();failedVoices.clear();
+   const u=new SpeechSynthesisUtterance(previewLine);const idx=Number(voiceSelect.value);if(voices[idx])u.voice=voices[idx];
+   u.rate=Math.min(1.02,Math.max(0.88,Number($('speed').value)));u.pitch=Number($('pitch').value);
+   u.onstart=()=>{setStatus('Previewing selected voice','Listen for clarity, warmth, and pronunciation.','PREVIEW');$('bars').classList.add('playing');};
+   u.onend=()=>{if(currentUtterance===u){$('bars').classList.remove('playing');setStatus('Preview finished','Choose another voice and preview it to compare.');}};
+   u.onerror=(e)=>{if(currentUtterance===u&&e.error!=='canceled'&&e.error!=='interrupted'){const bad=voices[Number(voiceSelect.value)];if(bad)failedVoices.add(bad.name+'|'+bad.lang);const next=nextWorkingVoice();if(next){showNotice('That voice could not be previewed, so VoxRead switched to '+next.name+'. Press Preview voice again to test it.');setStatus('Voice unavailable','Automatically selected another US English voice.');}else{showNotice('This browser could not preview the available voices. Try another voice or check device speech settings.');setStatus('Preview unavailable','Try refreshing or checking your device voice settings.');}$('bars').classList.remove('playing');}};
+   currentUtterance=u;window.speechSynthesis.speak(u);
+ });
+ voiceSelect.addEventListener('change',()=>{if(voices[Number(voiceSelect.value)]){const v=voices[Number(voiceSelect.value)];setStatus('Voice selected',v.name+' · '+v.lang+' — press Preview voice to hear it.');}});
+ play.addEventListener('click',()=>{
+   hideNotice();failedVoices.clear();const value=text.value.trim();if(!value){showNotice('Add or paste some text first, then press Read text.');text.focus();return;}
+   if(!('speechSynthesis'in window)){showNotice('Speech synthesis is not supported in this browser.');return;}
+   runId++;const id=runId;window.speechSynthesis.cancel();reset();chunks=splitText(value);currentChunk=0;play.disabled=true;pause.disabled=false;stop.disabled=false;setStatus('Starting voice…','Preparing your text for speech.');speakChunk(id);
+ });
+ pause.addEventListener('click',()=>{
+   if(!('speechSynthesis'in window))return;
+   if(!isPaused){window.speechSynthesis.pause();isPaused=true;pause.textContent='▶';$('bars').classList.remove('playing');setStatus('Paused','Press play to continue.','PAUSED');}
+   else{window.speechSynthesis.resume();isPaused=false;pause.textContent='Ⅱ';$('bars').classList.add('playing');setStatus('Reading your text','Playback resumed.',`${Math.min(currentChunk+1,chunks.length)}/${chunks.length}`);}
+ });
+ stop.addEventListener('click',()=>{runId++;window.speechSynthesis.cancel();reset();setStatus('Stopped','Ready whenever you are.');});
+ text.addEventListener('input',updateCount);
+ $('clear').addEventListener('click',()=>{text.value='';updateCount();text.focus();setStatus('Ready to read','Paste or type text to begin.');});
+ $('download').addEventListener('click',()=>{const value=text.value;if(!value.trim()){showNotice('Add some text before downloading your script.');text.focus();return;}const blob=new Blob([value],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='voxread-script.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);setStatus('Script downloaded','Saved as voxread-script.txt.');});
+ document.addEventListener('keydown',e=>{const tag=(e.target&&e.target.tagName||'').toLowerCase();if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();play.click();}else if(e.key==='Escape'){if('speechSynthesis'in window&&window.speechSynthesis.speaking){e.preventDefault();stop.click();}}});
+ $('sample').addEventListener('click',()=>{text.value=sample;updateCount();text.focus();});
+ $('speed').addEventListener('input',()=> $('speedValue').textContent=Number($('speed').value).toFixed(2)+'×');
+ $('pitch').addEventListener('input',()=> $('pitchValue').textContent=Number($('pitch').value).toFixed(2));
+ // Personal voice sample: local recording/file preview only; no upload or voice cloning.
+ const recordBtn=$('recordVoice'), stopRecordBtn=$('stopRecord'), voiceFile=$('voiceFile'), samplePlayer=$('voiceSamplePlayer'), sampleStatus=$('customVoiceStatus'), clearVoiceBtn=$('clearVoice');
+ let mediaRecorder=null, recordedParts=[], sampleUrl=null, activeStream=null;
+ function setVoiceSample(blob, label){
+   if(sampleUrl)URL.revokeObjectURL(sampleUrl);
+   sampleUrl=URL.createObjectURL(blob);samplePlayer.src=sampleUrl;samplePlayer.hidden=false;
+   sampleStatus.textContent=label+' ready. Press play below to listen to your sample. It is not used to synthesize new text.';
+ }
+ recordBtn.addEventListener('click',async()=>{
+   if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){sampleStatus.textContent='Recording is not supported in this browser. Try choosing an audio file instead.';return;}
+   try{
+     activeStream=await navigator.mediaDevices.getUserMedia({audio:true});recordedParts=[];
+     mediaRecorder=new MediaRecorder(activeStream);
+     mediaRecorder.ondataavailable=e=>{if(e.data&&e.data.size)recordedParts.push(e.data)};
+     mediaRecorder.onstop=()=>{activeStream?.getTracks().forEach(t=>t.stop());activeStream=null;stopRecordBtn.disabled=true;recordBtn.disabled=false;
+       if(recordedParts.length){const blob=new Blob(recordedParts,{type:mediaRecorder.mimeType||'audio/webm'});setVoiceSample(blob,'Recorded voice sample');}
+     };
+     mediaRecorder.start();recordBtn.disabled=true;stopRecordBtn.disabled=false;sampleStatus.textContent='Recording… speak clearly, then press Stop recording.';
+   }catch(err){sampleStatus.textContent='Microphone access was not granted. You can allow microphone access or choose an audio file.';}
+ });
+ stopRecordBtn.addEventListener('click',()=>{if(mediaRecorder&&mediaRecorder.state!=='inactive')mediaRecorder.stop()});
+ voiceFile.addEventListener('change',()=>{const file=voiceFile.files&&voiceFile.files[0];if(!file)return;if(!file.type.startsWith('audio/')){sampleStatus.textContent='Please choose an audio file.';voiceFile.value='';return;}setVoiceSample(file,'Uploaded audio sample');});
+ clearVoiceBtn.addEventListener('click',()=>{if(mediaRecorder&&mediaRecorder.state!=='inactive')mediaRecorder.stop();if(sampleUrl)URL.revokeObjectURL(sampleUrl);sampleUrl=null;samplePlayer.pause();samplePlayer.removeAttribute('src');samplePlayer.load();samplePlayer.hidden=true;voiceFile.value='';sampleStatus.textContent='No personal voice sample added.';});
+ if('speechSynthesis'in window){loadVoices();window.speechSynthesis.onvoiceschanged=()=>{const selected=voices[Number(voiceSelect.value)]?.name;loadVoices();if(selected){const idx=voices.findIndex(v=>v.name===selected);if(idx>=0)voiceSelect.value=String(idx);}};}else loadVoices();
+ updateCount();
+})();
+</script>
+</body>
+</html>
